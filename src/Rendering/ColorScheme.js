@@ -11,6 +11,7 @@ const color_schemes = {
         "killer":"#F82380",
         "armor":"#7230DB",
         "poison":"#44662e",
+        "slime":"#62a67b",
         "eye":"#B6C1EA",
         "eye-slit": "#0E1318",
     },
