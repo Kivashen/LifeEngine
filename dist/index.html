@@ -60,6 +60,7 @@
 							<div class='cell-legend-type' id='mover' title="Mover: Allows for movement and rotation."></div>
 							<div class='cell-legend-type' id='killer' title="Killer: Harms organisms in adjacent cells."></div>
 							<div class='cell-legend-type' id='armor' title="Armor: Negates affects of killer cell."></div>
+							<div class='cell-legend-type' id='poison' title="Poison: Leaves trail of poison."></div>
 							<div class='cell-legend-type' id='eye' title="Eye: Observes cells and decides movement."></div>
 							<div class='cell-legend-type' id='food' title="Food: Not part of an organism. Once an organism has eaten enough food, it will reproduce."></div>
 							<div class='cell-legend-type' id='wall' title="Wall: Not part of an organism. Blocks movement and reproduction."></div>
@@ -104,7 +105,9 @@
 								<div class='cell-type' id='armor' title="Armor: Unharmed by killer cell."></div>
 								<div class='cell-type' id='eye' title="Eye: Looks for cells to move away from or towards. Click again on a placed cell to rotate"></div>
 							</div>
-
+							<div style='grid-column: 3;'>
+								<div class='cell-type' id='poison' title="Poison: Leaves a trail of poison."></div>
+							</div>
 							<button id='clear-editor'>Clear</button>
 							<button class='randomize-button' id='generate-random' title="Randomizes organism"><i class="fa fa-random"></i></button>
 							<br>
