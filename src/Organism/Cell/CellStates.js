@@ -15,6 +15,10 @@ class Empty extends CellState {
     constructor() {
         super('empty');
     }
+    render(ctx, cell, size) {
+        ctx.fillStyle = cell.theft_zone ? this.zone_color : this.color;
+        ctx.fillRect(cell.x, cell.y, size, size);
+    }
 }
 class Food extends CellState {
     constructor() {

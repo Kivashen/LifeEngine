@@ -11,7 +11,8 @@ const color_schemes = {
         "killer":"#F82380",
         "armor":"#7230DB",
         "eye":"#B6C1EA",
-        "eye-slit": "#0E1318"
+        "eye-slit": "#0E1318",
+        "theft-zone": "#2E2060"
     },
     "classic":{
         "empty":"#121D29",
@@ -23,7 +24,8 @@ const color_schemes = {
         "killer":"red",
         "armor":"purple",
         "eye":"yellow",
-        "eye-slit": "#121D29"
+        "eye-slit": "#121D29",
+        "theft-zone": "#2E2060"
     },
     "soft":{
         "empty":"#0B0E11",
@@ -35,7 +37,8 @@ const color_schemes = {
         "killer":"#B06B85",
         "armor":"#7C69B5",
         "eye":"#AEB4C2",
-        "eye-slit": "#0B0E11"
+        "eye-slit": "#0B0E11",
+        "theft-zone": "#2E2060"
     },
     "dark":{
         "empty":"black",
@@ -47,7 +50,8 @@ const color_schemes = {
         "killer":"#992E5E",
         "armor":"#5632B5",
         "eye":"#8892B3",
-        "eye-slit": "black"
+        "eye-slit": "black",
+        "theft-zone": "#2E2060"
     },
     "grayscale":{
         "empty":"black",
@@ -59,7 +63,8 @@ const color_schemes = {
         "killer":"#AAAAAA",
         "armor":"#999999",
         "eye":"#888888",
-        "eye-slit": "black"
+        "eye-slit": "black",
+        "theft-zone": "#2E2060"
     }
 }
 const color_scheme_names = Object.keys(color_schemes);
@@ -80,6 +85,7 @@ class ColorSchemeSingleton {
             state.color = color_scheme[state.name];
         }
         CellStates.eye.slit_color=color_scheme['eye-slit']
+        CellStates.empty.zone_color = color_scheme['theft-zone'];
         for (var cell_type in color_scheme) {
             $('#'+cell_type+'.cell-type ').css('background-color', color_scheme[cell_type]);
             $('#'+cell_type+'.cell-legend-type').css('background-color', color_scheme[cell_type]);

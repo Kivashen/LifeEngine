@@ -20,6 +20,14 @@ class KillerCell extends BodyCell{
     killNeighbor(n_cell) {
         if(n_cell == null || n_cell.owner == null || n_cell.owner == this.org || !n_cell.owner.living || n_cell.state == CellStates.armor) 
             return;
+        //-------------------GTZ
+        // killers do no damage inside the zone. A killer standing in the zone is disarmed, and anything standing in the zone is protected.
+        if (Hyperparams.theftTruce) {
+            var my_cell = this.getRealCell();
+            if ((my_cell != null && my_cell.theft_zone) || n_cell.theft_zone)
+                return;
+        }
+        //--------------------
         if (Hyperparams.dontKillSameSpecies && n_cell.owner.species.name === this.org.species.name)
             return;
         var is_hit = n_cell.state == CellStates.killer; // has to be calculated before death
