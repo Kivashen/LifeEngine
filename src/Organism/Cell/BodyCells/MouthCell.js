@@ -8,6 +8,8 @@ class MouthCell extends BodyCell{
     }
 
     performFunction() {
+        if (this.impaired)
+            return; // a toxin has stopped this mouth feeding
         var env = this.org.env;
         var real_c = this.getRealCol();
         var real_r = this.getRealRow();
