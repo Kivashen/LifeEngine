@@ -249,8 +249,10 @@ class WorldEnvironment extends Environment{
         if (mine_in_zone.length === 0)
             return false;
 
-        // 2. is a different living organism touching me, also inside the zone?
-        let donor = null;
+        // 2. collect EVERY cell of another living organism touching me inside the
+        //    zone, then pick one at random. Taking the first match instead would
+        //    always steal the same cell, because the scan order is fixed.
+        let donors = [];
         for (let cell of mine_in_zone) {
             let c = cell.getRealCol();
             let r = cell.getRealRow();
@@ -260,14 +262,12 @@ class WorldEnvironment extends Environment{
                     continue;
                 if (g.owner == null || g.owner === org || !g.owner.living)
                     continue;
-                donor = g;
-                break;
+                donors.push(g);
             }
-            if (donor != null)
-                break;
         }
-        if (donor == null)
+        if (donors.length === 0)
             return false;
+        let donor = donors[Math.floor(Math.random() * donors.length)];
 
         // 3. one random change to MY body, equal thirds so average size does not
         //    drift. The donor is only a template and is never altered here: it
