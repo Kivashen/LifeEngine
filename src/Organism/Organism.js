@@ -14,6 +14,7 @@ class Organism {
         this.env = env;
         this.lifetime = 0;
         this.food_collected = 0;
+        this.slime_collected = 0;
         this.living = true;
         this.anatomy = new Anatomy(this)
         this.direction = Directions.down; // direction of movement
@@ -264,7 +265,7 @@ class Organism {
     }
 
     isPassableCell(cell, parent){
-        return cell != null && (cell.state == CellStates.empty || cell.owner == this || cell.owner == parent || cell.state == CellStates.food);
+        return cell != null && (cell.state == CellStates.empty || cell.owner == this || cell.owner == parent || cell.state == CellStates.food || cell.state == CellStates.slime);
     }
 
     isClear(col, row, rotation=this.rotation) {
@@ -273,7 +274,7 @@ class Organism {
             if (cell==null) {
                 return false;
             }
-            if (cell.owner==this || cell.state==CellStates.empty || (!Hyperparams.foodBlocksReproduction && cell.state==CellStates.food)){
+            if (cell.owner==this || cell.state==CellStates.empty || (!Hyperparams.foodBlocksReproduction && cell.state==CellStates.food) || cell.state==CellStates.slime){
                 continue;
             }
             return false;
@@ -311,7 +312,7 @@ class Organism {
 
     update() {
         this.lifetime++;
-        if (this.lifetime > this.lifespan()) {
+        if (this.lifetime > this.lifespan() || (this.slime_collected  >= this.foodNeeded() && !this.anatomy.is_poisonous && this.anatomy.is_mover)) {
             this.die();
             return this.living;
         }

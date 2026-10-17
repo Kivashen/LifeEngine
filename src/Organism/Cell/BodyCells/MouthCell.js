@@ -23,6 +23,9 @@ class MouthCell extends BodyCell{
         if (n_cell.state == CellStates.food){
             env.changeCell(n_cell.col, n_cell.row, CellStates.empty, null);
             this.org.food_collected++;
+        } else if (n_cell.state == CellStates.slime){
+            env.changeCell(n_cell.col, n_cell.row, CellStates.empty, null);
+            this.org.slime_collected++;
         }
     }
 }
