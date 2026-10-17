@@ -1,4 +1,12 @@
 // A cell state is used to differentiate type and render the cell
+// Draws a dark overlay on a cell whose function a toxin has impaired.
+function drawImpairedOverlay(ctx, cell, size) {
+    if (size > 1 && cell.cell_owner && cell.cell_owner.impaired) {
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.65)';
+        ctx.fillRect(cell.x, cell.y, size, size);
+    }
+}
+
 class CellState{
     constructor(name) {
         this.name = name;
@@ -8,6 +16,7 @@ class CellState{
     render(ctx, cell, size) {
         ctx.fillStyle = this.color;
         ctx.fillRect(cell.x, cell.y, size, size);
+        drawImpairedOverlay(ctx, cell, size);
     }
 }
 
@@ -57,6 +66,9 @@ class Armor extends CellState {
         super('armor');
     }
 }
+class Toxin extends CellState {
+    constructor() {
+        super('toxin');
 class Poison extends CellState {
     constructor() {
         super('poison');
@@ -82,6 +94,7 @@ class Eye extends CellState {
         ctx.fillStyle = this.slit_color;
         ctx.fillRect(x, y, w, h);
         ctx.setTransform(1, 0, 0, 1, 0, 0);
+        drawImpairedOverlay(ctx, cell, size);
     }
 }
 
@@ -97,15 +110,18 @@ const CellStates = {
     poison: new Poison(),
     slime: new Slime(),
     eye: new Eye(),
+    toxin: new Toxin(),
     defineLists() {
-        this.all = [this.empty, this.food, this.wall, this.mouth, this.producer, this.mover, this.killer, this.armor, this.poison, this.eye, this.slime]
-        this.living = [this.mouth, this.producer, this.mover, this.killer, this.armor, this.poison, this.eye];
+        this.all = [this.empty, this.food, this.wall, this.mouth, this.producer, this.mover, this.killer, this.armor, this.eye, this.toxin, this.poison, this.slime ]
+        this.living = [this.mouth, this.producer, this.mover, this.killer, this.armor, this.eye, this.toxin, this.poison];
+        // cell types mutation may create (toxin is left out so it only exists where it is seeded)
+        this.mutable = [this.mouth, this.producer, this.mover, this.killer, this.armor, this.eye, this.poison];
     },
     getRandomName: function() {
         return this.all[Math.floor(Math.random() * this.all.length)].name;
     },
     getRandomLivingType: function() {
-        return this.living[Math.floor(Math.random() * this.living.length)];
+        return this.mutable[Math.floor(Math.random() * this.mutable.length)];
     }
 }
 

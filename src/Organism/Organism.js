@@ -155,14 +155,14 @@ class Organism {
             }
         }
         if (this.calcRandomChance(Hyperparams.changeProb)){
-            let cell = this.anatomy.getRandomCell();
+            let cell = this.getMutableCell() || this.anatomy.getRandomCell();
             let state = CellStates.getRandomLivingType();
             this.anatomy.replaceCell(state, cell.loc_col, cell.loc_row);
             changed = true;
         }
         if (this.calcRandomChance(Hyperparams.removeProb)){
             if(this.anatomy.cells.length > 1) {
-                let cell = this.anatomy.getRandomCell();
+                let cell = this.getMutableCell() || this.anatomy.getRandomCell();
                 removed = this.anatomy.removeCell(cell.loc_col, cell.loc_row);
             }
         }
@@ -181,6 +181,19 @@ class Organism {
 
     calcRandomChance(prob) {
         return (Math.random() * 100) < prob;
+    }
+
+    // Picks a random cell that mutation may change or remove. Toxin cells are the
+    // experimental treatment, so mutation never deletes or replaces them.
+    getMutableCell() {
+        var candidates = [];
+        for (var cell of this.anatomy.cells) {
+            if (cell.state != CellStates.toxin)
+                candidates.push(cell);
+        }
+        if (candidates.length == 0)
+            return null;
+        return candidates[Math.floor(Math.random() * candidates.length)];
     }
 
     attemptMove() {

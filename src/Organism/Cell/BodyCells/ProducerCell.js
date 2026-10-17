@@ -8,7 +8,20 @@ class ProducerCell extends BodyCell{
         this.org.anatomy.is_producer = true;
     }
 
+    // true if this organism has a toxin cell somewhere in its body
+    carriesToxin() {
+        for (var cell of this.org.anatomy.cells) {
+            if (cell.state == CellStates.toxin)
+                return true;
+        }
+        return false;
+    }
+
     performFunction() {
+        if (this.impaired)
+            return; // a toxin has stopped this producer making food
+        if (this.carriesToxin())
+            return; // a plant hit by the toxin carries a toxin cell: its producers can no longer make food
         if (this.org.anatomy.is_mover && !Hyperparams.moversCanProduce)
             return;
         var env = this.org.env;

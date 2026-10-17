@@ -13,7 +13,8 @@ const color_schemes = {
         "poison":"#44662e",
         "slime":"#62a67b",
         "eye":"#B6C1EA",
-        "eye-slit": "#0E1318",
+        "toxin":"#A0522D",
+        "eye-slit": "#0E1318"
     },
     "classic":{
         "empty":"#121D29",
@@ -26,7 +27,8 @@ const color_schemes = {
         "armor":"purple",
         "poison:":  "#44662e",
         "eye":"yellow",
-        "eye-slit": "#121D29",
+        "toxin":"brown",
+        "eye-slit": "#121D29"
     },
     "soft":{
         "empty":"#0B0E11",
@@ -39,7 +41,8 @@ const color_schemes = {
         "armor":"#7C69B5",
         "poison:":  "#44662e",
         "eye":"#AEB4C2",
-        "eye-slit": "#0B0E11",
+        "toxin":"#8C5A3C",
+        "eye-slit": "#0B0E11"
     },
     "dark":{
         "empty":"black",
@@ -52,7 +55,8 @@ const color_schemes = {
         "armor":"#5632B5",
         "poison:":  "#44662e",
         "eye":"#8892B3",
-        "eye-slit": "black",
+        "toxin":"#7A4528",
+        "eye-slit": "black"
     },
     "grayscale":{
         "empty":"black",
@@ -65,7 +69,8 @@ const color_schemes = {
         "armor":"#999999",
         "poison:":"#44662e",
         "eye":"#888888",
-        "eye-slit": "black",
+        "toxin":"#DDDDDD",
+        "eye-slit": "black"
     }
 }
 const color_scheme_names = Object.keys(color_schemes);
