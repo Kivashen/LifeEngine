@@ -34,6 +34,11 @@ class EyeCell extends BodyCell{
     }
 
     performFunction() {
+        if (this.impaired) {
+            // a toxin has blinded this eye: it still reports to the brain, but sees nothing
+            this.org.brain.observe(new Observation(null, Hyperparams.lookRange, this.getAbsoluteDirection()));
+            return;
+        }
         var obs = this.look();
         this.org.brain.observe(obs);
     }

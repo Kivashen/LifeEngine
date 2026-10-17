@@ -14,6 +14,7 @@ class Organism {
         this.env = env;
         this.lifetime = 0;
         this.food_collected = 0;
+        this.slime_collected = 0;
         this.living = true;
         this.anatomy = new Anatomy(this)
         this.direction = Directions.down; // direction of movement
@@ -23,6 +24,7 @@ class Organism {
         this.ignore_brain_for = 0;
         this.mutability = 5;
         this.damage = 0;
+        this.neonatal_immunity = parent !== null;
         this.brain = new Brain(this);
         if (parent != null) {
             this.inherit(parent);
@@ -153,14 +155,14 @@ class Organism {
             }
         }
         if (this.calcRandomChance(Hyperparams.changeProb)){
-            let cell = this.anatomy.getRandomCell();
+            let cell = this.getMutableCell() || this.anatomy.getRandomCell();
             let state = CellStates.getRandomLivingType();
             this.anatomy.replaceCell(state, cell.loc_col, cell.loc_row);
             changed = true;
         }
         if (this.calcRandomChance(Hyperparams.removeProb)){
             if(this.anatomy.cells.length > 1) {
-                let cell = this.anatomy.getRandomCell();
+                let cell = this.getMutableCell() || this.anatomy.getRandomCell();
                 removed = this.anatomy.removeCell(cell.loc_col, cell.loc_row);
             }
         }
@@ -179,6 +181,19 @@ class Organism {
 
     calcRandomChance(prob) {
         return (Math.random() * 100) < prob;
+    }
+
+    // Picks a random cell that mutation may change or remove. Toxin cells are the
+    // experimental treatment, so mutation never deletes or replaces them.
+    getMutableCell() {
+        var candidates = [];
+        for (var cell of this.anatomy.cells) {
+            if (cell.state != CellStates.toxin)
+                candidates.push(cell);
+        }
+        if (candidates.length == 0)
+            return null;
+        return candidates[Math.floor(Math.random() * candidates.length)];
     }
 
     attemptMove() {
@@ -263,7 +278,7 @@ class Organism {
     }
 
     isPassableCell(cell, parent){
-        return cell != null && (cell.state == CellStates.empty || cell.owner == this || cell.owner == parent || cell.state == CellStates.food);
+        return cell != null && (cell.state == CellStates.empty || cell.owner == this || cell.owner == parent || cell.state == CellStates.food || cell.state == CellStates.slime);
     }
 
     isClear(col, row, rotation=this.rotation) {
@@ -272,7 +287,7 @@ class Organism {
             if (cell==null) {
                 return false;
             }
-            if (cell.owner==this || cell.state==CellStates.empty || (!Hyperparams.foodBlocksReproduction && cell.state==CellStates.food)){
+            if (cell.owner==this || cell.state==CellStates.empty || (!Hyperparams.foodBlocksReproduction && cell.state==CellStates.food) || cell.state==CellStates.slime){
                 continue;
             }
             return false;
@@ -281,6 +296,9 @@ class Organism {
     }
 
     harm() {
+        if (this.neonatal_immunity && this.lifetime < this.lifespan() * 0.25) {
+            return;
+        }
         this.damage++;
         if (this.damage >= this.maxHealth() || Hyperparams.instaKill) {
             this.die();
@@ -307,7 +325,7 @@ class Organism {
 
     update() {
         this.lifetime++;
-        if (this.lifetime > this.lifespan()) {
+        if (this.lifetime > this.lifespan() || (this.slime_collected  >= this.foodNeeded() && !this.anatomy.is_poisonous && this.anatomy.is_mover)) {
             this.die();
             return this.living;
         }
