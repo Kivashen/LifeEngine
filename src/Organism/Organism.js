@@ -308,7 +308,7 @@ class Organism {
 
     update() {
         this.lifetime++;
-        if (this.lifetime > this.lifespan() || (this.slime_collected  >= this.foodNeeded() && !this.anatomy.is_poisonous)) {
+        if (this.lifetime > this.lifespan() || (this.slime_collected  >= this.foodNeeded() && !this.anatomy.is_poisonous && this.anatomy.is_mover)) {
             this.die();
             return this.living;
         }
