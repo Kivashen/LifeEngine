@@ -73,6 +73,8 @@ class Armor extends CellState {
 class Toxin extends CellState {
     constructor() {
         super('toxin');
+    }
+}
 class Poison extends CellState {
     constructor() {
         super('poison');

@@ -120,6 +120,7 @@ class EditorController extends CanvasController{
                     break;
                 case "toxin":
                     self.edit_cell_type = CellStates.toxin;
+                    break;
                 case "poison":
                     self.edit_cell_type = CellStates.poison;
                     break;
