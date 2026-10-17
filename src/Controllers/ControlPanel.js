@@ -497,6 +497,9 @@ class ControlPanel {
                 case "click-kill":
                     self.setMode(Modes.ClickKill);
                     break;
+                case "theft-zone":
+                    self.setMode(Modes.TheftZone);
+                    break;
                 case "select":
                     self.setMode(Modes.Select);
                     break;

@@ -3,6 +3,7 @@ class Cell{
     constructor(state, col, row, x, y){
         this.owner = null; // owner organism
         this.cell_owner = null; // specific body cell of the owner organism that occupies this grid cell
+        this.theft_zone = false; // GTZ(Gene Theft Zone): is this square part of the zone?
         this.setType(state);
         this.col = col;
         this.row = row;

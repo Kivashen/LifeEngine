@@ -13,6 +13,7 @@ const color_schemes = {
         "poison":"#44662e",
         "slime":"#62a67b",
         "eye":"#B6C1EA",
+        "theft-zone": "#2E2060",
         "toxin":"#A0522D",
         "eye-slit": "#0E1318"
     },
@@ -26,7 +27,9 @@ const color_schemes = {
         "killer":"red",
         "armor":"purple",
         "poison:":  "#44662e",
+        "slime":"#62a67b",
         "eye":"yellow",
+        "theft-zone": "#2E2060",
         "toxin":"brown",
         "eye-slit": "#121D29"
     },
@@ -40,7 +43,9 @@ const color_schemes = {
         "killer":"#B06B85",
         "armor":"#7C69B5",
         "poison:":  "#44662e",
+        "slime":"#62a67b",
         "eye":"#AEB4C2",
+        "theft-zone": "#2E2060",
         "toxin":"#8C5A3C",
         "eye-slit": "#0B0E11"
     },
@@ -54,7 +59,9 @@ const color_schemes = {
         "killer":"#992E5E",
         "armor":"#5632B5",
         "poison:":  "#44662e",
+        "slime":"#62a67b",
         "eye":"#8892B3",
+        "theft-zone": "#2E2060",
         "toxin":"#7A4528",
         "eye-slit": "black"
     },
@@ -68,7 +75,9 @@ const color_schemes = {
         "killer":"#AAAAAA",
         "armor":"#999999",
         "poison:":"#44662e",
+        "slime":"#62a67b",
         "eye":"#888888",
+        "theft-zone": "#2E2060",
         "toxin":"#DDDDDD",
         "eye-slit": "black"
     }
@@ -91,6 +100,7 @@ class ColorSchemeSingleton {
             state.color = color_scheme[state.name];
         }
         CellStates.eye.slit_color=color_scheme['eye-slit']
+        CellStates.empty.zone_color = color_scheme['theft-zone'];
         for (var cell_type in color_scheme) {
             $('#'+cell_type+'.cell-type ').css('background-color', color_scheme[cell_type]);
             $('#'+cell_type+'.cell-legend-type').css('background-color', color_scheme[cell_type]);

@@ -3,6 +3,10 @@ const Renderer = require('../Rendering/Renderer');
 const GridMap = require('../Grid/GridMap');
 const Organism = require('../Organism/Organism');
 const CellStates = require('../Organism/Cell/CellStates');
+//-------------------GTZ
+const Neighbors = require('../Grid/Neighbors');
+const Directions = require('../Organism/Directions');
+//--------------------
 const EnvironmentController = require('../Controllers/EnvironmentController');
 const Hyperparams = require('../Hyperparameters.js');
 const FossilRecord = require('../Stats/FossilRecord');
@@ -35,7 +39,12 @@ class WorldEnvironment extends Environment{
             var org = this.organisms[i];
             if (!org.living || !org.update()) {
                 to_remove.push(i);
+                continue;
             }
+            //GTZ-----------------
+            if (Hyperparams.theftChance > 0)
+                this.theftStep(org);
+            //--------------------
         }
         this.removeOrganisms(to_remove);
         if (Hyperparams.foodDropProb > 0) {
@@ -189,6 +198,135 @@ class WorldEnvironment extends Environment{
         this.num_rows = Math.ceil(this.renderer.height / cell_size);
         this.grid_map.resize(this.num_cols, this.num_rows, cell_size);
     }
+
+    //-------------------GTZ
+    paintTheftZone(col_start, row_start, col_end, row_end, on=true) {
+        let count = 0;
+        let c0 = Math.max(0, Math.min(col_start, col_end));
+        let c1 = Math.min(this.grid_map.cols - 1, Math.max(col_start, col_end));
+        let r0 = Math.max(0, Math.min(row_start, row_end));
+        let r1 = Math.min(this.grid_map.rows - 1, Math.max(row_start, row_end));
+        for (let c = c0; c <= c1; c++) {
+            for (let r = r0; r <= r1; r++) {
+                let cell = this.grid_map.cellAt(c, r);
+                if (cell == null)
+                    continue;
+                cell.theft_zone = on;
+                count++;
+            }
+        }
+        this.renderer.renderFullGrid(this.grid_map.grid);
+        return count;
+    }
+
+    clearTheftZone() {
+        return this.paintTheftZone(0, 0, this.grid_map.cols - 1, this.grid_map.rows - 1, false);
+    }
+
+    // Where a body cell at (loc_col, loc_row) actually sits in the world once the
+    // organism's rotation is applied. Mirrors BodyCell.rotatedCol / rotatedRow.
+    localToReal(org, loc_col, loc_row) {
+        switch (org.rotation) {
+            case Directions.down:  return [org.c - loc_col, org.r - loc_row];
+            case Directions.left:  return [org.c + loc_row, org.r - loc_col];
+            case Directions.right: return [org.c - loc_row, org.r + loc_col];
+            default:               return [org.c + loc_col, org.r + loc_row]; // up
+        }
+    }
+
+    // One organism's turn. Returns true if its body changed.
+    theftStep(org) {
+        if (Math.random() > Hyperparams.theftChance)
+            return false;
+
+        // 1. which of my cells are standing inside the zone?
+        let mine_in_zone = [];
+        for (let cell of org.anatomy.cells) {
+            let g = this.grid_map.cellAt(cell.getRealCol(), cell.getRealRow());
+            if (g != null && g.theft_zone)
+                mine_in_zone.push(cell);
+        }
+        if (mine_in_zone.length === 0)
+            return false;
+
+        // 2. collect EVERY cell of another living organism touching me inside the
+        //    zone, then pick one at random. Taking the first match instead would
+        //    always steal the same cell, because the scan order is fixed.
+        let donors = [];
+        for (let cell of mine_in_zone) {
+            let c = cell.getRealCol();
+            let r = cell.getRealRow();
+            for (let loc of Neighbors.adjacent) {
+                let g = this.grid_map.cellAt(c + loc[0], r + loc[1]);
+                if (g == null || !g.theft_zone)
+                    continue;
+                if (g.owner == null || g.owner === org || !g.owner.living)
+                    continue;
+                donors.push(g);
+            }
+        }
+        if (donors.length === 0)
+            return false;
+        let donor = donors[Math.floor(Math.random() * donors.length)];
+
+        // 3. one random change to MY body, equal thirds so average size does not
+        //    drift. The donor is only a template and is never altered here: it
+        //    takes its own turn and rolls its own outcome.
+        let target = org.anatomy.getRandomCell();
+        let roll = Math.floor(Math.random() * 3);
+        let changed = false;
+
+        if (roll === 0) {                       // GAIN a copy of the donor's cell
+            changed = this.theftGain(org, target, donor.state);
+        }
+        else if (roll === 1) {                  // REPLACE one of my own with it
+            if (target.state !== donor.state) {
+                org.anatomy.replaceCell(donor.state, target.loc_col, target.loc_row, false);
+                changed = true;
+            }
+        }
+        else {                                  // LOSE one of my own
+            if (org.anatomy.cells.length > 1) { // same guard mutate() uses
+                let g = this.grid_map.cellAt(target.getRealCol(), target.getRealRow());
+                changed = org.anatomy.removeCell(target.loc_col, target.loc_row);
+                // the square is no longer part of the body, so release it.
+                // updateGrid() only writes the cells an organism still has, it
+                // never clears the ones it has lost.
+                if (changed && g != null && g.owner === org)
+                    this.changeCell(g.col, g.row, CellStates.empty, null);
+            }
+        }
+
+        if (changed) {
+            org.anatomy.checkTypeChange();      // producer/mover/eye flags must be rebuilt
+            org.updateGrid();
+        }
+        return changed;
+    }
+
+    // Grow one new cell, copied from the donor, beside one of my existing cells.
+    theftGain(org, target, state) {
+        let slots = Neighbors.all.slice();   // same 8 directions mutate() grows into
+        for (let i = slots.length - 1; i > 0; i--) { // shuffle: no preferred growth direction
+            let j = Math.floor(Math.random() * (i + 1));
+            let t = slots[i]; slots[i] = slots[j]; slots[j] = t;
+        }
+        for (let loc of slots) {
+            let lc = target.loc_col + loc[0];
+            let lr = target.loc_row + loc[1];
+            if (!org.anatomy.canAddCellAt(lc, lr))
+                continue;
+            let real = this.localToReal(org, lc, lr);
+            let g = this.grid_map.cellAt(real[0], real[1]);
+            // only grow into a free square. never overwrite another organism.
+            if (g == null || (g.state !== CellStates.empty && g.state !== CellStates.food))
+                continue;
+            org.anatomy.addDefaultCell(state, lc, lr);
+            return true;
+        }
+        return false;
+    }
+
 
     serialize() {
         this.clearDeadOrganisms();
