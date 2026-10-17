@@ -120,6 +120,8 @@ class EditorController extends CanvasController{
                     break;
                 case "toxin":
                     self.edit_cell_type = CellStates.toxin;
+                case "poison":
+                    self.edit_cell_type = CellStates.poison;
                     break;
             }
             $(".cell-type" ).css( "border-color", "black" );

@@ -30,6 +30,12 @@ class Food extends CellState {
         super('food');
     }
 }
+class Slime extends CellState {
+    constructor() {
+        super('slime');
+    }
+}
+
 class Wall extends CellState {
     constructor() {
         super('wall');
@@ -63,6 +69,9 @@ class Armor extends CellState {
 class Toxin extends CellState {
     constructor() {
         super('toxin');
+class Poison extends CellState {
+    constructor() {
+        super('poison');
     }
 }
 class Eye extends CellState {
@@ -98,13 +107,15 @@ const CellStates = {
     mover: new Mover(),
     killer: new Killer(),
     armor: new Armor(),
+    poison: new Poison(),
+    slime: new Slime(),
     eye: new Eye(),
     toxin: new Toxin(),
     defineLists() {
-        this.all = [this.empty, this.food, this.wall, this.mouth, this.producer, this.mover, this.killer, this.armor, this.eye, this.toxin]
-        this.living = [this.mouth, this.producer, this.mover, this.killer, this.armor, this.eye, this.toxin];
+        this.all = [this.empty, this.food, this.wall, this.mouth, this.producer, this.mover, this.killer, this.armor, this.eye, this.toxin, this.poison, this.slime ]
+        this.living = [this.mouth, this.producer, this.mover, this.killer, this.armor, this.eye, this.toxin, this.poison];
         // cell types mutation may create (toxin is left out so it only exists where it is seeded)
-        this.mutable = [this.mouth, this.producer, this.mover, this.killer, this.armor, this.eye];
+        this.mutable = [this.mouth, this.producer, this.mover, this.killer, this.armor, this.eye, this.poison];
     },
     getRandomName: function() {
         return this.all[Math.floor(Math.random() * this.all.length)].name;
