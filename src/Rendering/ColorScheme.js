@@ -14,6 +14,7 @@ const color_schemes = {
         "poison":"#44662e",
         "slime":"#62a67b",
         "eye":"#B6C1EA",
+        "toxin":"#A0522D",
         "theft-zone": "#2E2060",
         "eye-slit": "#0E1318"
     },
@@ -29,8 +30,8 @@ const color_schemes = {
         "poison":  "#44662e",
         "slime":"#62a67b",
         "eye":"yellow",
+        "toxin":"brown",
         "theft-zone": "#2E2060",
-        "toxin": "brown",
         "eye-slit": "#121D29"
     },
     "soft":{
@@ -45,8 +46,8 @@ const color_schemes = {
         "poison":  "#44662e",
         "slime":"#62a67b",
         "eye":"#AEB4C2",
+        "toxin":"#8C5A3C",
         "theft-zone": "#2E2060",
-        "toxin": "#8C5A3C",
         "eye-slit": "#0B0E11"
     },
     "dark":{
@@ -61,8 +62,8 @@ const color_schemes = {
         "poison":  "#44662e",
         "slime":"#62a67b",
         "eye":"#8892B3",
+        "toxin":"#7A4528",
         "theft-zone": "#2E2060",
-        "toxin": "#7A4528",
         "eye-slit": "black"
     },
     "grayscale":{
