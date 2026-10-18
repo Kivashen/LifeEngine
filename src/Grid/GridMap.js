@@ -79,13 +79,14 @@ class GridMap {
         return [c, r];
     }
 
-    serialize() {
+        serialize() {
         // Rather than store every single cell, we will store non organism cells (food+walls)
         // and assume everything else is empty. Organism cells will be set when the organism
         // list is loaded. This reduces filesize and complexity.
         let grid = {cell_size:this.cell_size, cols:this.cols, rows:this.rows};
         grid.food = [];
         grid.walls = [];
+        grid.theft_zone = []; // GTZ: remember the painted squares
         for (let col of this.grid) {
             for (let cell of col) {
                 if (cell.state===CellStates.wall || cell.state===CellStates.food){
@@ -95,16 +96,26 @@ class GridMap {
                     else
                         grid.walls.push(c)
                 }
+                if (cell.theft_zone)
+                    grid.theft_zone.push({c: cell.col, r: cell.row});
             }
         }
         return grid;
     }
 
-    loadRaw(grid) {
+        loadRaw(grid) {
         for (let f of grid.food)
             this.setCellType(f.c, f.r, CellStates.food);
         for (let w of grid.walls)
             this.setCellType(w.c, w.r, CellStates.wall);
+        //-------------------GTZ
+        // older save files have no zone, so default to an empty list
+        for (let z of (grid.theft_zone || [])) {
+            let cell = this.cellAt(z.c, z.r);
+            if (cell != null)
+                cell.theft_zone = true;
+        }
+        //--------------------
     }
 }
 

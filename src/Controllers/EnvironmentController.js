@@ -127,6 +127,16 @@ class EnvironmentController extends CanvasController{
                             this.dropCellType(cell.col, cell.row, CellStates.empty, false, CellStates.food);
                         }
                         break;
+
+                //GTZ--------------------------------------------------
+                case Modes.TheftZone:
+                        if (left_click){
+                            this.paintZone(cell.col, cell.row, true);
+                        }
+                        else if (right_click){
+                            this.paintZone(cell.col, cell.row, false);
+                        }
+                        break;
                 case Modes.ClickKill:
                     this.killNearOrganisms();
                     break;
@@ -204,6 +214,19 @@ class EnvironmentController extends CanvasController{
             if (ignoreState != null && cell.state == ignoreState)
                 continue;
             this.env.changeCell(c, r, state, null);
+        }
+    }
+
+    // GTZ paints the flag rather than a cell state, so organisms, food and walls on the square are left exactly as they are.
+    paintZone(col, row, on) {
+        for (var loc of Neighbors.inRange(WorldConfig.brush_size)){
+            var c = col + loc[0];
+            var r = row + loc[1];
+            var cell = this.env.grid_map.cellAt(c, r);
+            if (cell == null)
+                continue;
+            cell.theft_zone = on;
+            this.env.renderer.renderCell(cell);
         }
     }
 

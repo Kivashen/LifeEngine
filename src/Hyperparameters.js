@@ -33,6 +33,11 @@ const Hyperparams = {
         this.extraMoverFoodCost = 0;
 
         this.maxOrganisms = -1;
+
+
+        // GTZ Edits
+        this.theftChance = 0.01; // chance per organism per tick that a contact inside the zone produces a theft.
+        this.theftTruce = true; // whether killer cells are disarmed inside the zone
     },
 
     loadJsonObj(obj) {

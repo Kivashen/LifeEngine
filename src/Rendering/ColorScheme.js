@@ -10,10 +10,12 @@ const color_schemes = {
         "mover":"#60D4FF",
         "killer":"#F82380",
         "armor":"#7230DB",
+        "toxin":"#A0522D",
         "poison":"#44662e",
         "slime":"#62a67b",
         "eye":"#B6C1EA",
         "toxin":"#A0522D",
+        "theft-zone": "#2E2060",
         "eye-slit": "#0E1318"
     },
     "classic":{
@@ -25,9 +27,11 @@ const color_schemes = {
         "mover":"blue",
         "killer":"red",
         "armor":"purple",
-        "poison:":  "#44662e",
+        "poison":  "#44662e",
+        "slime":"#62a67b",
         "eye":"yellow",
         "toxin":"brown",
+        "theft-zone": "#2E2060",
         "eye-slit": "#121D29"
     },
     "soft":{
@@ -39,9 +43,11 @@ const color_schemes = {
         "mover":"#6BA2C4",
         "killer":"#B06B85",
         "armor":"#7C69B5",
-        "poison:":  "#44662e",
+        "poison":  "#44662e",
+        "slime":"#62a67b",
         "eye":"#AEB4C2",
         "toxin":"#8C5A3C",
+        "theft-zone": "#2E2060",
         "eye-slit": "#0B0E11"
     },
     "dark":{
@@ -53,9 +59,11 @@ const color_schemes = {
         "mover":"#278BB0",
         "killer":"#992E5E",
         "armor":"#5632B5",
-        "poison:":  "#44662e",
+        "poison":  "#44662e",
+        "slime":"#62a67b",
         "eye":"#8892B3",
         "toxin":"#7A4528",
+        "theft-zone": "#2E2060",
         "eye-slit": "black"
     },
     "grayscale":{
@@ -67,8 +75,10 @@ const color_schemes = {
         "mover":"#BBBBBB",
         "killer":"#AAAAAA",
         "armor":"#999999",
-        "poison:":"#44662e",
+        "poison":"#44662e",
+        "slime":"#62a67b",
         "eye":"#888888",
+        "theft-zone": "#2E2060",
         "toxin":"#DDDDDD",
         "eye-slit": "black"
     }
@@ -91,6 +101,7 @@ class ColorSchemeSingleton {
             state.color = color_scheme[state.name];
         }
         CellStates.eye.slit_color=color_scheme['eye-slit']
+        CellStates.empty.zone_color = color_scheme['theft-zone'];
         for (var cell_type in color_scheme) {
             $('#'+cell_type+'.cell-type ').css('background-color', color_scheme[cell_type]);
             $('#'+cell_type+'.cell-legend-type').css('background-color', color_scheme[cell_type]);
