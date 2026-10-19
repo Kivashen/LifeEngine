@@ -296,9 +296,6 @@ class Organism {
     }
 
     harm() {
-        if (this.neonatal_immunity && this.lifetime < this.lifespan() * 0.25) {
-            return;
-        }
         this.damage++;
         if (this.damage >= this.maxHealth() || Hyperparams.instaKill) {
             this.die();
