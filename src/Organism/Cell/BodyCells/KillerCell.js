@@ -2,6 +2,14 @@ const CellStates = require("../CellStates");
 const BodyCell = require("./BodyCell");
 const Hyperparams = require("../../../Hyperparameters");
 
+//------NI
+// animals not harmed by killer cells 1/4 of lifespan
+function isNeonate(org) {
+    if (org.anatomy.is_producer)
+        return false;
+    return org.neonatal_immunity && org.lifetime < org.lifespan() * 0.25;
+}
+
 // An animal (no producer cells) carrying a toxin cell is immune to killer cells.
 function isToxicAnimal(org) {
     if (org.anatomy.is_producer)
@@ -30,6 +38,10 @@ class KillerCell extends BodyCell{
 
     killNeighbor(n_cell) {
         if(n_cell == null || n_cell.owner == null || n_cell.owner == this.org || !n_cell.owner.living || n_cell.state == CellStates.armor) 
+            return;
+        // --------NI  
+        //killer do no damage to babies!
+        if (isNeonate(n_cell.owner))
             return;
         //-------------------GTZ
         // killers do no damage inside the zone. A killer standing in the zone is disarmed, and anything standing in the zone is protected.
